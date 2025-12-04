@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>سایت شخصی من</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.3/misc/Farsi-Digits/font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <style>
+      /* استایل‌های پایه */
+      :root {
+        --primary: #9d00ff;
+        --secondary: #00e5ff;
+        --accent: #ff00e5;
+        --background: #050510;
+        --card-bg: rgba(20, 20, 40, 0.7);
+        --text-primary: #ffffff;
+        --text-secondary: #b8b8ff;
+        --glow-primary: 0 0 10px rgba(157, 0, 255, 0.7), 0 0 20px rgba(157, 0, 255, 0.5);
+        --card-width: 300px;
+        --card-height: 420px;
+        --carousel-radius: 400px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      
+      body, html {
+        height: 100%;
+        font-family: 'Vazirmatn', sans-serif; /* فونت فارسی */
+        background-color: var(--background);
+        color: var(--text-primary);
+        overflow: hidden;
+        display: grid;
+        align-items: center;
+      }
+
+      /* پس‌زمینه فضایی */
+      .cosmos-background {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+        background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      }
+      .stars-container {
+        position: absolute; width: 100%; height: 100%;
+        background-image: radial-gradient(1px 1px at 25% 25%, white, rgba(0,0,0,0)), 
+                          radial-gradient(1px 1px at 50% 50%, white, rgba(0,0,0,0));
+        background-size: 200px 200px, 400px 400px;
+        animation: twinkle 10s linear infinite;
+      }
+      @keyframes twinkle { 0% {background-position: 0 0, 0 0;} 100% {background-position: 200px 200px, 400px 400px;} }
+
+      /* کانتینر چرخ و فلک */
+      .carousel-container {
+        position: relative; width: 100%; height: 500px; perspective: 1000px;
+        display: flex; justify-content: center; align-items: center;
+      }
+      .carousel {
+        position: relative; width: var(--carousel-radius); height: var(--carousel-radius);
+        transform-style: preserve-3d; transition: transform 0.5s ease;
+      }
+
+      /* کارت‌ها */
+      .memory-card {
+        position: absolute; width: var(--card-width); height: var(--card-height);
+        left: 50%; top: 50%;
+        margin-left: calc(var(--card-width) / -2); margin-top: calc(var(--card-height) / -2);
+        transform-style: preserve-3d; cursor: pointer;
+      }
+      .card-inner {
+        position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .memory-card.flipped .card-inner { transform: rotateY(180deg); }
+
+      .card-front, .card-back {
+        position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+        border-radius: 15px; overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      
+      .card-front {
+        background: linear-gradient(135deg, rgba(30, 30, 60, 0.9), rgba(20, 20, 40, 0.95));
+        border: 1px solid rgba(157, 0, 255, 0.3);
+      }
+      .card-back {
+        background: linear-gradient(135deg, rgba(20, 20, 40, 0.95), rgba(30, 30, 60, 0.9));
+        border: 1px solid rgba(0, 229, 255, 0.3);
+        transform: rotateY(180deg);
+        padding: 20px; text-align: justify;
+      }
+
+      .card-content {
+        padding: 20px; height: 100%; display: flex; flex-direction: column; position: relative;
+        text-align: center;
+      }
+      
+      .memory-date { font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; }
+      h3 { font-size: 1.5rem; margin-bottom: 15px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+      
+      .memory-image {
+        width: 100%; height: 150px; margin-bottom: 15px; display: flex;
+        justify-content: center; align-items: center; border-radius: 8px;
+        background: rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;
+      }
+      .memory-image i { font-size: 4rem; color: var(--primary); z-index: 2; }
+      
+      /* افکت نویز روی تصویر */
+      .glitch-effect {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(45deg, transparent 65%, rgba(157, 0, 255, 0.3) 70%, transparent 75%);
+        background-size: 200% 200%; animation: glitch 3s linear infinite; z-index: 1;
+      }
+      @keyframes glitch { 0% {background-position: 0 0;} 100% {background-position: 100% 100%;} }
+
+      .memory-preview { font-size: 0.9rem; color: var(--text-secondary); }
+      .card-back p { font-size: 0.95rem; line-height: 1.6; color: #d0d0ff; margin-bottom: 15px; }
+
+      /* دکمه‌های کنترل */
+      .carousel-controls {
+        position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 20px; z-index: 10;
+      }
+      .control-btn {
+        background: rgba(20, 20, 40, 0.7); border: 1px solid var(--primary); color: #fff;
+        width: 45px; height: 45px; border-radius: 50%; display: flex;
+        justify-content: center; align-items: center; cursor: pointer; transition: 0.3s;
+      }
+      .control-btn:hover { background: var(--primary); transform: scale(1.1); }
+
+      /* ریسپانسیو برای موبایل */
+      @media (max-width: 768px) {
+        :root { --card-width: 260px; --card-height: 380px; --carousel-radius: 280px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cosmos-background"><div class="stars-container"></div></div>
+
+    <div class="carousel-container">
+      <div class="carousel" id="memory-carousel">
+        
+        <div class="memory-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-content">
+                <div class="memory-date">پروژه اول</div>
+                <h3>طراحی وبسایت</h3> <div class="memory-image">
+                  <i class="fa-solid fa-code"></i> <div class="glitch-effect"></div>
+                </div>
+                <p class="memory-preview">برای دیدن توضیحات بیشتر کلیک کنید...</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <h3>جزئیات پروژه</h3>
+              <p>
+                این اولین پروژه من بود که با عشق و علاقه انجام دادم. در این پروژه یاد گرفتم که چطور با HTML و CSS کار کنم و ایده‌هایم را به واقعیت تبدیل کنم.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="memory-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-content">
+                <div class="memory-date">مهارت‌ها</div>
+                <h3>برنامه‌نویسی پایتون</h3>
+                <div class="memory-image">
+                  <i class="fa-brands fa-python"></i>
+                  <div class="glitch-effect"></div>
+                </div>
+                <p class="memory-preview">دنیای داده‌ها و هوش مصنوعی...</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <h3>مسیر یادگیری</h3>
+              <p>
+                پایتون زبان مورد علاقه من است. با استفاده از آن می‌توانم کارهای تکراری را خودکار کنم و به سمت هوش مصنوعی حرکت کنم.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="memory-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-content">
+                <div class="memory-date">خدمات</div>
+                <h3>مشاوره دیجیتال</h3>
+                <div class="memory-image">
+                  <i class="fa-solid fa-rocket"></i>
+                  <div class="glitch-effect"></div>
+                </div>
+                <p class="memory-preview">رشد کسب و کار شما...</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <h3>استراتژی رشد</h3>
+              <p>
+                من به کسب و کارها کمک می‌کنم تا در دنیای دیجیتال دیده شوند. از طراحی سایت گرفته تا سئو و مدیریت شبکه‌های اجتماعی.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="memory-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="card-content">
+                <div class="memory-date">ارتباط با من</div>
+                <h3>شبکه‌های اجتماعی</h3>
+                <div class="memory-image">
+                  <i class="fa-solid fa-share-nodes"></i>
+                  <div class="glitch-effect"></div>
+                </div>
+                <p class="memory-preview">همیشه آنلاین هستم...</p>
+              </div>
+            </div>
+            <div class="card-back">
+              <h3>راه‌های تماس</h3>
+              <p>
+                می‌توانید من را در اینستاگرام، لینکدین و گیت‌هاب پیدا کنید. خوشحال می‌شوم اگر پروژه‌ای دارید با هم صحبت کنیم.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      
+      <div class="carousel-controls">
+        <button id="next-btn" class="control-btn"><i class="fa-solid fa-chevron-right"></i></button>
+        <button id="prev-btn" class="control-btn"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+    </div>
+
+    <script>
+      // کدهای جاوااسکریپت برای چرخاندن کارت‌ها
+      document.addEventListener("DOMContentLoaded", function () {
+        const carousel = document.getElementById("memory-carousel");
+        const cards = carousel.querySelectorAll(".memory-card");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        let theta = 0;
+        let radius = window.innerWidth <= 768 ? 280 : 400;
+        const totalCards = cards.length;
+        
+        // چیدمان دایره‌ای کارت‌ها
+        function arrangeCards() {
+            const angle = 360 / totalCards;
+            cards.forEach((card, i) => {
+                const cardAngle = angle * i;
+                const rad = (cardAngle * Math.PI) / 180;
+                card.style.transform = `rotateY(${cardAngle}deg) translateZ(${radius}px)`;
+                card.dataset.index = i;
+                card.addEventListener("click", () => {
+                   // اگر کارتی که جلو است کلیک شود، بچرخد
+                   const currentRotation = Math.round(theta / angle) * angle;
+                   const indexInFront = ((Math.round(-currentRotation / angle) % totalCards) + totalCards) % totalCards;
+                   
+                   if(i === indexInFront) card.classList.toggle("flipped");
+                   else {
+                       // اگر کارت کناری کلیک شد، چرخ و فلک به آن سمت برود
+                       theta = -cardAngle;
+                       rotateCarousel();
+                   }
+                });
+            });
+        }
+
+        function rotateCarousel() {
+            carousel.style.transform = `rotateY(${theta}deg)`;
+            // بستن کارت‌های باز شده هنگام چرخش
+            cards.forEach(c => c.classList.remove("flipped"));
+        }
+
+        prevBtn.addEventListener("click", () => { theta += 360 / totalCards; rotateCarousel(); });
+        nextBtn.addEventListener("click", () => { theta -= 360 / totalCards; rotateCarousel(); });
+
+        window.addEventListener("resize", () => {
+            radius = window.innerWidth <= 768 ? 280 : 400;
+            arrangeCards();
+        });
+        
+        arrangeCards();
+      });
+    </script>
+  </body>
+</html>
